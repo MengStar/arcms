@@ -218,7 +218,7 @@ public class ItemController {
 
     /**
      * @api {put} /apps/{appId}/namespaces/{namespaceName}/items update
-     * @apiGroup update
+     * @apiGroup Item
      * @apiParam {String} appId
      * @apiParam {String} namespaceName
      * @apiParam {NamespaceSyncModel} model
