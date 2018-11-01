@@ -25,70 +25,100 @@ import java.util.Objects;
 @RestController
 public class AppController {
 
-  @Autowired
-  private AppService appService;
+    @Autowired
+    private AppService appService;
 
-  @Autowired
-  private AdminService adminService;
+    @Autowired
+    private AdminService adminService;
 
-  @RequestMapping(path = "/apps", method = RequestMethod.POST)
-  public AppDTO create(@RequestBody AppDTO dto) {
-    if (!InputValidator.isValidClusterNamespace(dto.getAppId())) {
-      throw new BadRequestException(String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
-    }
-    App entity = BeanUtils.transfrom(App.class, dto);
-    App managedEntity = appService.findOne(entity.getAppId());
-    if (managedEntity != null) {
-      throw new BadRequestException("app already exist.");
-    }
+    /**
+     * @api {post} /apps create
+     * @apiGroup AdminApp
+     * @apiParam {AppDTO} appDTO
+     */
+    @RequestMapping(path = "/apps", method = RequestMethod.POST)
+    public AppDTO create(@RequestBody AppDTO dto) {
+        if (!InputValidator.isValidClusterNamespace(dto.getAppId())) {
+            throw new BadRequestException(String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+        }
+        App entity = BeanUtils.transfrom(App.class, dto);
+        App managedEntity = appService.findOne(entity.getAppId());
+        if (managedEntity != null) {
+            throw new BadRequestException("app already exist.");
+        }
 
-    entity = adminService.createNewApp(entity);
+        entity = adminService.createNewApp(entity);
 
-    dto = BeanUtils.transfrom(AppDTO.class, entity);
-    return dto;
-  }
-
-  @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.DELETE)
-  public void delete(@PathVariable("appId") String appId, @RequestParam String operator) {
-    App entity = appService.findOne(appId);
-    if (entity == null) {
-      throw new NotFoundException("app not found for appId " + appId);
-    }
-    adminService.deleteApp(entity, operator);
-  }
-
-  @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.PUT)
-  public void update(@PathVariable String appId, @RequestBody App app) {
-    if (!Objects.equals(appId, app.getAppId())) {
-      throw new BadRequestException("The App Id of path variable and request body is different");
+        dto = BeanUtils.transfrom(AppDTO.class, entity);
+        return dto;
     }
 
-    appService.update(app);
-  }
-
-  @RequestMapping(value = "/apps", method = RequestMethod.GET)
-  public List<AppDTO> find(@RequestParam(value = "name", required = false) String name,
-                           Pageable pageable) {
-    List<App> app = null;
-    if (StringUtils.isBlank(name)) {
-      app = appService.findAll(pageable);
-    } else {
-      app = appService.findByName(name);
+    /**
+     * @api {DELETE} /apps/{appId:.+} delete
+     * @apiGroup AdminApp
+     * @apiParam {String} appId
+     */
+    @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable("appId") String appId, @RequestParam String operator) {
+        App entity = appService.findOne(appId);
+        if (entity == null) {
+            throw new NotFoundException("app not found for appId " + appId);
+        }
+        adminService.deleteApp(entity, operator);
     }
-    return BeanUtils.batchTransform(AppDTO.class, app);
-  }
 
-  @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.GET)
-  public AppDTO get(@PathVariable("appId") String appId) {
-    App app = appService.findOne(appId);
-    if (app == null) {
-      throw new NotFoundException("app not found for appId " + appId);
+    /**
+     * @api {PUT} /apps/{appId:.+} update
+     * @apiGroup AdminApp
+     * @apiParam {String} appId
+     * @apiParam {App} app
+     */
+    @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.PUT)
+    public void update(@PathVariable String appId, @RequestBody App app) {
+        if (!Objects.equals(appId, app.getAppId())) {
+            throw new BadRequestException("The App Id of path variable and request body is different");
+        }
+
+        appService.update(app);
     }
-    return BeanUtils.transfrom(AppDTO.class, app);
-  }
 
-  @RequestMapping(value = "/apps/{appId}/unique", method = RequestMethod.GET)
-  public boolean isAppIdUnique(@PathVariable("appId") String appId) {
-    return appService.isAppIdUnique(appId);
-  }
+    /**
+     * @api {GET} /apps find
+     * @apiGroup AdminApp
+     * @apiParam {String} name
+     * @apiParam {Pageable} pageable
+     */
+    @RequestMapping(value = "/apps", method = RequestMethod.GET)
+    public List<AppDTO> find(@RequestParam(value = "name", required = false) String name,
+                             Pageable pageable) {
+        List<App> app = null;
+        if (StringUtils.isBlank(name)) {
+            app = appService.findAll(pageable);
+        } else {
+            app = appService.findByName(name);
+        }
+        return BeanUtils.batchTransform(AppDTO.class, app);
+    }
+    /**
+     * @api {GET} /apps/{appId:.+} get
+     * @apiGroup AdminApp
+     * @apiParam {String} appId
+     */
+    @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.GET)
+    public AppDTO get(@PathVariable("appId") String appId) {
+        App app = appService.findOne(appId);
+        if (app == null) {
+            throw new NotFoundException("app not found for appId " + appId);
+        }
+        return BeanUtils.transfrom(AppDTO.class, app);
+    }
+    /**
+     * @api {GET} /apps/{appId}/unique isAppIdUnique
+     * @apiGroup AdminApp
+     * @apiParam {String} appId
+     */
+    @RequestMapping(value = "/apps/{appId}/unique", method = RequestMethod.GET)
+    public boolean isAppIdUnique(@PathVariable("appId") String appId) {
+        return appService.isAppIdUnique(appId);
+    }
 }
