@@ -9,24 +9,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/apollo")
 public class ApolloInfoController {
-
-  @RequestMapping("app")
-  public String getApp() {
-    return Foundation.app().toString();
-  }
-
-  @RequestMapping("net")
-  public String getNet() {
-    return Foundation.net().toString();
-  }
-
-  @RequestMapping("server")
-  public String getServer() {
-    return Foundation.server().toString();
-  }
-
-  @RequestMapping("version")
-  public String getVersion() {
-    return Apollo.VERSION;
-  }
+    /**
+     * @api {GET} /sys/app getApp
+     * @apiGroup Info
+     */
+    @RequestMapping("app")
+    public String getApp() {
+        return Foundation.app().toString();
+    }
+    /**
+     * @api {GET} /sys/net getNet
+     * @apiGroup Info
+     */
+    @RequestMapping("net")
+    public String getNet() {
+        return Foundation.net().toString();
+    }
+    /**
+     * @api {GET} /sys/server getServer
+     * @apiGroup Info
+     */
+    @RequestMapping("server")
+    public String getServer() {
+        return Foundation.server().toString();
+    }
+    /**
+     * @api {GET} /sys/version getVersion
+     * @apiGroup Info
+     */
+    @RequestMapping("version")
+    public String getVersion() {
+        return Apollo.VERSION;
+    }
 }
