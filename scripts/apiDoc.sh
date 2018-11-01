@@ -1,0 +1,1 @@
+apidoc -i ~/IdeaProjects/arcms -o ~/IdeaProjects/arcms-apiDoc

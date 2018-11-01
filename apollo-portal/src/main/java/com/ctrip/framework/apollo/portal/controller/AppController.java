@@ -23,9 +23,11 @@ import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -42,179 +44,221 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
-
 @RestController
 @RequestMapping("/apps")
 public class AppController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AppService appService;
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
+    @Autowired
+    private UserInfoHolder userInfoHolder;
+    @Autowired
+    private AppService appService;
+    @Autowired
+    private PortalSettings portalSettings;
+    @Autowired
+    private ApplicationEventPublisher publisher;
+    @Autowired
+    private RolePermissionService rolePermissionService;
+    @Autowired
+    private RoleInitializationService roleInitializationService;
 
-  @RequestMapping(value = "", method = RequestMethod.GET)
-  public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
-    if (StringUtils.isEmpty(appIds)) {
-      return appService.findAll();
-    } else {
-      return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
-    }
-
-  }
-
-  @RequestMapping(value = "/by-owner", method = RequestMethod.GET)
-  public List<App> findAppsByOwner(@RequestParam("owner") String owner, Pageable page) {
-    Set<String> appIds = Sets.newHashSet();
-
-    List<Role> userRoles = rolePermissionService.findUserRoles(owner);
-
-    for (Role role : userRoles) {
-      String appId = RoleUtils.extractAppIdFromMasterRoleName(role.getRoleName());
-
-      if (appId != null) {
-        appIds.add(appId);
-      }
-    }
-
-    return appService.findByAppIds(appIds, page);
-  }
-
-  @RequestMapping(value = "", method = RequestMethod.POST)
-  public App create(@RequestBody AppModel appModel) {
-
-    App app = transformToApp(appModel);
-
-    App createdApp = appService.createAppInLocal(app);
-
-    publisher.publishEvent(new AppCreationEvent(createdApp));
-
-    Set<String> admins = appModel.getAdmins();
-    if (!CollectionUtils.isEmpty(admins)) {
-      rolePermissionService
-          .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppId()),
-              admins, userInfoHolder.getUser().getUserId());
-    }
-
-    return createdApp;
-  }
-
-  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
-  @RequestMapping(value = "/{appId:.+}", method = RequestMethod.PUT)
-  public void update(@PathVariable String appId, @RequestBody AppModel appModel) {
-    if (!Objects.equals(appId, appModel.getAppId())) {
-      throw new BadRequestException("The App Id of path variable and request body is different");
-    }
-
-    App app = transformToApp(appModel);
-
-    App updatedApp = appService.updateAppInLocal(app);
-
-    publisher.publishEvent(new AppInfoChangedEvent(updatedApp));
-  }
-
-  @RequestMapping(value = "/{appId}/navtree", method = RequestMethod.GET)
-  public MultiResponseEntity<EnvClusterInfo> nav(@PathVariable String appId) {
-
-    MultiResponseEntity<EnvClusterInfo> response = MultiResponseEntity.ok();
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
-      try {
-        response.addResponseEntity(RichResponseEntity.ok(appService.createEnvNavNode(env, appId)));
-      } catch (Exception e) {
-        response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
-            "load env:" + env.name() + " cluster error." + e
-                .getMessage()));
-      }
-    }
-    return response;
-  }
-
-  @RequestMapping(value = "/envs/{env}", method = RequestMethod.POST, consumes = {
-      "application/json"})
-  public ResponseEntity<Void> create(@PathVariable String env, @RequestBody App app) {
-
-    RequestPrecondition.checkArgumentsNotEmpty(app.getName(), app.getAppId(), app.getOwnerEmail(),
-        app.getOwnerName(),
-        app.getOrgId(), app.getOrgName());
-    if (!InputValidator.isValidClusterNamespace(app.getAppId())) {
-      throw new BadRequestException(InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE);
-    }
-
-    appService.createAppInRemote(Env.valueOf(env), app);
-
-    roleInitializationService.initNamespaceSpecificEnvRoles(app.getAppId(), ConfigConsts.NAMESPACE_APPLICATION, env, userInfoHolder.getUser().getUserId());
-
-    return ResponseEntity.ok().build();
-  }
-
-  @RequestMapping(value = "/{appId:.+}", method = RequestMethod.GET)
-  public App load(@PathVariable String appId) {
-
-    return appService.load(appId);
-  }
-
-
-  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/{appId:.+}", method = RequestMethod.DELETE)
-  public void deleteApp(@PathVariable String appId) {
-    App app = appService.deleteAppInLocal(appId);
-
-    publisher.publishEvent(new AppDeletionEvent(app));
-  }
-
-  @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)
-  public MultiResponseEntity<Env> findMissEnvs(@PathVariable String appId) {
-
-    MultiResponseEntity<Env> response = MultiResponseEntity.ok();
-    for (Env env : portalSettings.getActiveEnvs()) {
-      try {
-        appService.load(env, appId);
-      } catch (Exception e) {
-        if (e instanceof HttpClientErrorException &&
-            ((HttpClientErrorException) e).getStatusCode() == HttpStatus.NOT_FOUND) {
-          response.addResponseEntity(RichResponseEntity.ok(env));
+    /**
+     * @api {get} /apps 查看所有项目
+     * @apiGroup App
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
+        if (StringUtils.isEmpty(appIds)) {
+            return appService.findAll();
         } else {
-          response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
-              String.format("load appId:%s from env %s error.", appId,
-                  env)
-                  + e.getMessage()));
+            return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
         }
-      }
+
     }
 
-    return response;
+    /**
+     * @api {get} /apps/by-owner 按拥有者查看项目
+     * @apiGroup App
+     * @apiParam {String} owner 项目拥有人账号
+     */
+    @RequestMapping(value = "/by-owner", method = RequestMethod.GET)
+    public List<App> findAppsByOwner(@RequestParam("owner") String owner, Pageable page) {
+        Set<String> appIds = Sets.newHashSet();
 
-  }
+        List<Role> userRoles = rolePermissionService.findUserRoles(owner);
 
-  private App transformToApp(AppModel appModel) {
-    String appId = appModel.getAppId();
-    String appName = appModel.getName();
-    String ownerName = appModel.getOwnerName();
-    String orgId = appModel.getOrgId();
-    String orgName = appModel.getOrgName();
+        for (Role role : userRoles) {
+            String appId = RoleUtils.extractAppIdFromMasterRoleName(role.getRoleName());
 
-    RequestPrecondition.checkArgumentsNotEmpty(appId, appName, ownerName, orgId, orgName);
+            if (appId != null) {
+                appIds.add(appId);
+            }
+        }
 
-    if (!InputValidator.isValidClusterNamespace(appModel.getAppId())) {
-      throw new BadRequestException(
-          String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+        return appService.findByAppIds(appIds, page);
     }
 
-    return App.builder()
-        .appId(appId)
-        .name(appName)
-        .ownerName(ownerName)
-        .orgId(orgId)
-        .orgName(orgName)
-        .build();
+    /**
+     * @api {post} /apps 创建项目
+     * @apiGroup App
+     * @apiParam {AppVO} appVO 项目VO
+     */
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public App create(@RequestBody AppModel appModel) {
 
-  }
+        App app = transformToApp(appModel);
+
+        App createdApp = appService.createAppInLocal(app);
+
+        publisher.publishEvent(new AppCreationEvent(createdApp));
+
+        Set<String> admins = appModel.getAdmins();
+        if (!CollectionUtils.isEmpty(admins)) {
+            rolePermissionService
+                    .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppId()),
+                            admins, userInfoHolder.getUser().getUserId());
+        }
+
+        return createdApp;
+    }
+
+    /**
+     * @api {put} /apps/{appId} 更新项目
+     * @apiGroup App
+     * @apiParam {String} appId 项目Id
+     * @apiParam {AppVO} appVO 项目VO
+     */
+    @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
+    @RequestMapping(value = "/{appId:.+}", method = RequestMethod.PUT)
+    public void update(@PathVariable String appId, @RequestBody AppModel appModel) {
+        if (!Objects.equals(appId, appModel.getAppId())) {
+            throw new BadRequestException("The App Id of path variable and request body is different");
+        }
+
+        App app = transformToApp(appModel);
+
+        App updatedApp = appService.updateAppInLocal(app);
+
+        publisher.publishEvent(new AppInfoChangedEvent(updatedApp));
+    }
+
+    /**
+     * @api {get} /apps/{appId}/navtree 获取项目导航树
+     * @apiGroup App
+     * @apiParam {String} appId 项目Id
+     */
+    @RequestMapping(value = "/{appId}/navtree", method = RequestMethod.GET)
+    public MultiResponseEntity<EnvClusterInfo> nav(@PathVariable String appId) {
+
+        MultiResponseEntity<EnvClusterInfo> response = MultiResponseEntity.ok();
+        List<Env> envs = portalSettings.getActiveEnvs();
+        for (Env env : envs) {
+            try {
+                response.addResponseEntity(RichResponseEntity.ok(appService.createEnvNavNode(env, appId)));
+            } catch (Exception e) {
+                response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "load env:" + env.name() + " cluster error." + e
+                                .getMessage()));
+            }
+        }
+        return response;
+    }
+
+    /**
+     * @api {post} /apps/envs/{env} 按环境获取项目
+     * @apiGroup App
+     * @apiParam {String} env 环境名
+     */
+    @RequestMapping(value = "/envs/{env}", method = RequestMethod.POST, consumes = {
+            "application/json"})
+    public ResponseEntity<Void> create(@PathVariable String env, @RequestBody App app) {
+
+        RequestPrecondition.checkArgumentsNotEmpty(app.getName(), app.getAppId(), app.getOwnerEmail(),
+                app.getOwnerName(),
+                app.getOrgId(), app.getOrgName());
+        if (!InputValidator.isValidClusterNamespace(app.getAppId())) {
+            throw new BadRequestException(InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE);
+        }
+
+        appService.createAppInRemote(Env.valueOf(env), app);
+
+        roleInitializationService.initNamespaceSpecificEnvRoles(app.getAppId(), ConfigConsts.NAMESPACE_APPLICATION, env, userInfoHolder.getUser().getUserId());
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * @api {post} /apps/appId 按id获取项目
+     * @apiGroup App
+     * @apiParam {String} appId 项目id
+     */
+    @RequestMapping(value = "/{appId:.+}", method = RequestMethod.GET)
+    public App load(@PathVariable String appId) {
+
+        return appService.load(appId);
+    }
+
+    /**
+     * @api {delete} /apps/{appId} 按id删除项目
+     * @apiGroup App
+     * @apiParam {String} appId 项目Id
+     */
+    @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+    @RequestMapping(value = "/{appId:.+}", method = RequestMethod.DELETE)
+    public void deleteApp(@PathVariable String appId) {
+        App app = appService.deleteAppInLocal(appId);
+
+        publisher.publishEvent(new AppDeletionEvent(app));
+    }
+    /**
+     * @api {get} /apps/{appId}/miss_envs 查找项目其他环境
+     * @apiGroup App
+     * @apiParam {String} appId 项目Id
+     */
+    @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)
+    public MultiResponseEntity<Env> findMissEnvs(@PathVariable String appId) {
+
+        MultiResponseEntity<Env> response = MultiResponseEntity.ok();
+        for (Env env : portalSettings.getActiveEnvs()) {
+            try {
+                appService.load(env, appId);
+            } catch (Exception e) {
+                if (e instanceof HttpClientErrorException &&
+                        ((HttpClientErrorException) e).getStatusCode() == HttpStatus.NOT_FOUND) {
+                    response.addResponseEntity(RichResponseEntity.ok(env));
+                } else {
+                    response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
+                            String.format("load appId:%s from env %s error.", appId,
+                                    env)
+                                    + e.getMessage()));
+                }
+            }
+        }
+
+        return response;
+
+    }
+
+    private App transformToApp(AppModel appModel) {
+        String appId = appModel.getAppId();
+        String appName = appModel.getName();
+        String ownerName = appModel.getOwnerName();
+        String orgId = appModel.getOrgId();
+        String orgName = appModel.getOrgName();
+
+        RequestPrecondition.checkArgumentsNotEmpty(appId, appName, ownerName, orgId, orgName);
+
+        if (!InputValidator.isValidClusterNamespace(appModel.getAppId())) {
+            throw new BadRequestException(
+                    String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+        }
+
+        return App.builder()
+                .appId(appId)
+                .name(appName)
+                .ownerName(ownerName)
+                .orgId(orgId)
+                .orgName(orgName)
+                .build();
+
+    }
 }
