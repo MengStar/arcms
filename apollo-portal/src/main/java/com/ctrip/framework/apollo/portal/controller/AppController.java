@@ -62,7 +62,7 @@ public class AppController {
     private RoleInitializationService roleInitializationService;
 
     /**
-     * @api {get} /apps 查看所有项目
+     * @api {get} /apps findApps
      * @apiGroup App
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -76,9 +76,9 @@ public class AppController {
     }
 
     /**
-     * @api {get} /apps/by-owner 按拥有者查看项目
+     * @api {get} /apps/by-owner findAppsByOwner
      * @apiGroup App
-     * @apiParam {String} owner 项目拥有人账号
+     * @apiParam {String} owner
      */
     @RequestMapping(value = "/by-owner", method = RequestMethod.GET)
     public List<App> findAppsByOwner(@RequestParam("owner") String owner, Pageable page) {
@@ -98,9 +98,9 @@ public class AppController {
     }
 
     /**
-     * @api {post} /apps 创建项目
+     * @api {post} /apps create
      * @apiGroup App
-     * @apiParam {AppVO} appVO 项目VO
+     * @apiParam {AppVO} appVO
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
     public App create(@RequestBody AppModel appModel) {
@@ -122,10 +122,10 @@ public class AppController {
     }
 
     /**
-     * @api {put} /apps/{appId} 更新项目
+     * @api {put} /apps/{appId:.+} update
      * @apiGroup App
-     * @apiParam {String} appId 项目Id
-     * @apiParam {AppVO} appVO 项目VO
+     * @apiParam {String} appId
+     * @apiParam {AppVO} appVO
      */
     @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
     @RequestMapping(value = "/{appId:.+}", method = RequestMethod.PUT)
@@ -142,9 +142,9 @@ public class AppController {
     }
 
     /**
-     * @api {get} /apps/{appId}/navtree 获取项目导航树
+     * @api {get} /apps/{appId}/navtree nav
      * @apiGroup App
-     * @apiParam {String} appId 项目Id
+     * @apiParam {String} appId
      */
     @RequestMapping(value = "/{appId}/navtree", method = RequestMethod.GET)
     public MultiResponseEntity<EnvClusterInfo> nav(@PathVariable String appId) {
@@ -164,9 +164,9 @@ public class AppController {
     }
 
     /**
-     * @api {post} /apps/envs/{env} 按环境获取项目
+     * @api {post} /apps/envs/{env} create
      * @apiGroup App
-     * @apiParam {String} env 环境名
+     * @apiParam {String} env
      */
     @RequestMapping(value = "/envs/{env}", method = RequestMethod.POST, consumes = {
             "application/json"})
@@ -187,9 +187,9 @@ public class AppController {
     }
 
     /**
-     * @api {post} /apps/appId 按id获取项目
+     * @api {get} /apps/{appId:.+} load
      * @apiGroup App
-     * @apiParam {String} appId 项目id
+     * @apiParam {String} appId
      */
     @RequestMapping(value = "/{appId:.+}", method = RequestMethod.GET)
     public App load(@PathVariable String appId) {
@@ -198,9 +198,9 @@ public class AppController {
     }
 
     /**
-     * @api {delete} /apps/{appId} 按id删除项目
+     * @api {delete} apps/{appId:.+} deleteApp
      * @apiGroup App
-     * @apiParam {String} appId 项目Id
+     * @apiParam {String} appId
      */
     @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
     @RequestMapping(value = "/{appId:.+}", method = RequestMethod.DELETE)
@@ -210,9 +210,9 @@ public class AppController {
         publisher.publishEvent(new AppDeletionEvent(app));
     }
     /**
-     * @api {get} /apps/{appId}/miss_envs 查找项目其他环境
+     * @api {get} /apps/{appId}/miss_envs
      * @apiGroup App
-     * @apiParam {String} appId 项目Id
+     * @apiParam {String} appId
      */
     @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)
     public MultiResponseEntity<Env> findMissEnvs(@PathVariable String appId) {
