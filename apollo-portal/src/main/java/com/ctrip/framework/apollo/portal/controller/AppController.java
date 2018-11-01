@@ -164,7 +164,7 @@ public class AppController {
     }
 
     /**
-     * @api {post} /apps/envs/{env} create
+     * @api {post} /apps/envs/{env} createEnv
      * @apiGroup App
      * @apiParam {String} env
      */
