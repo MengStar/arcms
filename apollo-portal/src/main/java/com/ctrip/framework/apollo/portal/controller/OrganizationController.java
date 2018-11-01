@@ -20,7 +20,10 @@ public class OrganizationController {
   @Autowired
   private PortalConfig portalConfig;
 
-
+  /**
+   * @api {GET} /organizations loadOrganization
+   * @apiGroup Organization
+   */
   @RequestMapping
   public List<Organization> loadOrganization() {
     return portalConfig.organizations();
