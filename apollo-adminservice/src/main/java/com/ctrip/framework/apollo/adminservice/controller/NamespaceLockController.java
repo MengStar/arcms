@@ -19,32 +19,39 @@ import org.springframework.web.bind.annotation.RestController;
 public class NamespaceLockController {
 
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private BizConfig bizConfig;
+    @Autowired
+    private NamespaceLockService namespaceLockService;
+    @Autowired
+    private NamespaceService namespaceService;
+    @Autowired
+    private BizConfig bizConfig;
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
-  public NamespaceLockDTO getNamespaceLockOwner(@PathVariable String appId, @PathVariable String clusterName,
-                                                @PathVariable String namespaceName) {
-    Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
-    if (namespace == null) {
-      throw new BadRequestException("namespace not exist.");
+    /**
+     * @api {GET} /apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock getNamespaceLockOwner
+     * @apiGroup AdminNamespace
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     */
+    @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
+    public NamespaceLockDTO getNamespaceLockOwner(@PathVariable String appId, @PathVariable String clusterName,
+                                                  @PathVariable String namespaceName) {
+        Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
+        if (namespace == null) {
+            throw new BadRequestException("namespace not exist.");
+        }
+
+        if (bizConfig.isNamespaceLockSwitchOff()) {
+            return null;
+        }
+
+        NamespaceLock lock = namespaceLockService.findLock(namespace.getId());
+
+        if (lock == null) {
+            return null;
+        }
+
+        return BeanUtils.transfrom(NamespaceLockDTO.class, lock);
     }
-
-    if (bizConfig.isNamespaceLockSwitchOff()) {
-      return null;
-    }
-
-    NamespaceLock lock = namespaceLockService.findLock(namespace.getId());
-
-    if (lock == null) {
-      return null;
-    }
-
-    return BeanUtils.transfrom(NamespaceLockDTO.class, lock);
-  }
 
 }

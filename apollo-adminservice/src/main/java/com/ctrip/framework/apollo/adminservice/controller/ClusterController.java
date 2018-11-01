@@ -21,62 +21,93 @@ import java.util.List;
 @RestController
 public class ClusterController {
 
-  @Autowired
-  private ClusterService clusterService;
+    @Autowired
+    private ClusterService clusterService;
 
-  @RequestMapping(path = "/apps/{appId}/clusters", method = RequestMethod.POST)
-  public ClusterDTO create(@PathVariable("appId") String appId,
-                           @RequestParam(value = "autoCreatePrivateNamespace", defaultValue = "true") boolean autoCreatePrivateNamespace,
-                           @RequestBody ClusterDTO dto) {
-    if (!InputValidator.isValidClusterNamespace(dto.getName())) {
-      throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+    /**
+     * @api {post} /apps/{appId}/clusters create
+     * @apiGroup AdminCluster
+     * @apiParam {String} appId
+     * @apiParam {boolean} autoCreatePrivateNamespace
+     * @apiParam {ClusterDTO} dto
+     */
+    @RequestMapping(path = "/apps/{appId}/clusters", method = RequestMethod.POST)
+    public ClusterDTO create(@PathVariable("appId") String appId,
+                             @RequestParam(value = "autoCreatePrivateNamespace", defaultValue = "true") boolean autoCreatePrivateNamespace,
+                             @RequestBody ClusterDTO dto) {
+        if (!InputValidator.isValidClusterNamespace(dto.getName())) {
+            throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+        }
+
+        Cluster entity = BeanUtils.transfrom(Cluster.class, dto);
+        Cluster managedEntity = clusterService.findOne(appId, entity.getName());
+        if (managedEntity != null) {
+            throw new BadRequestException("cluster already exist.");
+        }
+
+        if (autoCreatePrivateNamespace) {
+            entity = clusterService.saveWithInstanceOfAppNamespaces(entity);
+        } else {
+            entity = clusterService.saveWithoutInstanceOfAppNamespaces(entity);
+        }
+
+        dto = BeanUtils.transfrom(ClusterDTO.class, entity);
+        return dto;
     }
 
-    Cluster entity = BeanUtils.transfrom(Cluster.class, dto);
-    Cluster managedEntity = clusterService.findOne(appId, entity.getName());
-    if (managedEntity != null) {
-      throw new BadRequestException("cluster already exist.");
+    /**
+     * @api {DELETE} /apps/{appId}/clusters/{clusterName:.+} delete
+     * @apiGroup AdminCluster
+     * @apiParam {String} appId
+     * @apiParam {String} operator
+     * @apiParam {String} clusterName
+     */
+    @RequestMapping(path = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable("appId") String appId,
+                       @PathVariable("clusterName") String clusterName, @RequestParam String operator) {
+        Cluster entity = clusterService.findOne(appId, clusterName);
+        if (entity == null) {
+            throw new NotFoundException("cluster not found for clusterName " + clusterName);
+        }
+        clusterService.delete(entity.getId(), operator);
     }
 
-    if (autoCreatePrivateNamespace) {
-      entity = clusterService.saveWithInstanceOfAppNamespaces(entity);
-    } else {
-      entity = clusterService.saveWithoutInstanceOfAppNamespaces(entity);
+    /**
+     * @api {GET} /apps/{appId}/clusters find
+     * @apiGroup AdminCluster
+     * @apiParam {String} appId
+     */
+    @RequestMapping(value = "/apps/{appId}/clusters", method = RequestMethod.GET)
+    public List<ClusterDTO> find(@PathVariable("appId") String appId) {
+        List<Cluster> clusters = clusterService.findParentClusters(appId);
+        return BeanUtils.batchTransform(ClusterDTO.class, clusters);
     }
 
-    dto = BeanUtils.transfrom(ClusterDTO.class, entity);
-    return dto;
-  }
-
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.DELETE)
-  public void delete(@PathVariable("appId") String appId,
-                     @PathVariable("clusterName") String clusterName, @RequestParam String operator) {
-    Cluster entity = clusterService.findOne(appId, clusterName);
-    if (entity == null) {
-      throw new NotFoundException("cluster not found for clusterName " + clusterName);
+    /**
+     * @api {GET} /apps/{appId}/clusters/{clusterName:.+} get
+     * @apiGroup AdminCluster
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     */
+    @RequestMapping(value = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.GET)
+    public ClusterDTO get(@PathVariable("appId") String appId,
+                          @PathVariable("clusterName") String clusterName) {
+        Cluster cluster = clusterService.findOne(appId, clusterName);
+        if (cluster == null) {
+            throw new NotFoundException("cluster not found for name " + clusterName);
+        }
+        return BeanUtils.transfrom(ClusterDTO.class, cluster);
     }
-    clusterService.delete(entity.getId(), operator);
-  }
 
-  @RequestMapping(value = "/apps/{appId}/clusters", method = RequestMethod.GET)
-  public List<ClusterDTO> find(@PathVariable("appId") String appId) {
-    List<Cluster> clusters = clusterService.findParentClusters(appId);
-    return BeanUtils.batchTransform(ClusterDTO.class, clusters);
-  }
-
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.GET)
-  public ClusterDTO get(@PathVariable("appId") String appId,
-                        @PathVariable("clusterName") String clusterName) {
-    Cluster cluster = clusterService.findOne(appId, clusterName);
-    if (cluster == null) {
-      throw new NotFoundException("cluster not found for name " + clusterName);
+    /**
+     * @api {GET} /apps/{appId}/cluster/{clusterName}/unique  isAppIdUnique
+     * @apiGroup AdminCluster
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     */
+    @RequestMapping(value = "/apps/{appId}/cluster/{clusterName}/unique", method = RequestMethod.GET)
+    public boolean isAppIdUnique(@PathVariable("appId") String appId,
+                                 @PathVariable("clusterName") String clusterName) {
+        return clusterService.isClusterNameUnique(appId, clusterName);
     }
-    return BeanUtils.transfrom(ClusterDTO.class, cluster);
-  }
-
-  @RequestMapping(value = "/apps/{appId}/cluster/{clusterName}/unique", method = RequestMethod.GET)
-  public boolean isAppIdUnique(@PathVariable("appId") String appId,
-                               @PathVariable("clusterName") String clusterName) {
-    return clusterService.isClusterNameUnique(appId, clusterName);
-  }
 }

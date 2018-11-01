@@ -16,18 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ItemSetController {
 
-  @Autowired
-  private ItemSetService itemSetService;
+    @Autowired
+    private ItemSetService itemSetService;
 
-  @PreAcquireNamespaceLock
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset", method = RequestMethod.POST)
-  public ResponseEntity<Void> create(@PathVariable String appId, @PathVariable String clusterName,
-                                     @PathVariable String namespaceName, @RequestBody ItemChangeSets changeSet) {
+    /**
+     * @api {POST} /apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset create
+     * @apiGroup AdminItem
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     * @apiParam {ItemChangeSets} changeSet
+     */
+    @PreAcquireNamespaceLock
+    @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset", method = RequestMethod.POST)
+    public ResponseEntity<Void> create(@PathVariable String appId, @PathVariable String clusterName,
+                                       @PathVariable String namespaceName, @RequestBody ItemChangeSets changeSet) {
 
-    itemSetService.updateSet(appId, clusterName, namespaceName, changeSet);
+        itemSetService.updateSet(appId, clusterName, namespaceName, changeSet);
 
-    return ResponseEntity.status(HttpStatus.OK).build();
-  }
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 
 }

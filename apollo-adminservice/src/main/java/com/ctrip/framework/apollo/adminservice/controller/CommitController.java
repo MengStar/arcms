@@ -18,15 +18,23 @@ import java.util.List;
 @RestController
 public class CommitController {
 
-  @Autowired
-  private CommitService commitService;
+    @Autowired
+    private CommitService commitService;
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/commit", method = RequestMethod.GET)
-  public List<CommitDTO> find(@PathVariable String appId, @PathVariable String clusterName,
-                              @PathVariable String namespaceName, Pageable pageable){
+    /**
+     * @api {GET} /apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/commit find
+     * @apiGroup AdminCommit
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     * @apiParam {Pageable} pageable
+     */
+    @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/commit", method = RequestMethod.GET)
+    public List<CommitDTO> find(@PathVariable String appId, @PathVariable String clusterName,
+                                @PathVariable String namespaceName, Pageable pageable) {
 
-    List<Commit> commits = commitService.find(appId, clusterName, namespaceName, pageable);
-    return BeanUtils.batchTransform(CommitDTO.class, commits);
-  }
+        List<Commit> commits = commitService.find(appId, clusterName, namespaceName, pageable);
+        return BeanUtils.batchTransform(CommitDTO.class, commits);
+    }
 
 }

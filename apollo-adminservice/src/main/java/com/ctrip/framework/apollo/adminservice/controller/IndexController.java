@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/")
 public class IndexController {
-
-  @RequestMapping(path = "", method = RequestMethod.GET)
-  public String index() {
-    return "apollo-adminservice";
-  }
+    /**
+     * @api {GET} / index
+     * @apiGroup AdminIndex
+     */
+    @RequestMapping(path = "", method = RequestMethod.GET)
+    public String index() {
+        return "apollo-adminservice";
+    }
 }
