@@ -17,63 +17,76 @@ import java.util.stream.Collectors;
 @RequestMapping("/services")
 public class ServiceController {
 
-  @Autowired
-  private DiscoveryService discoveryService;
+    @Autowired
+    private DiscoveryService discoveryService;
 
+    /**
+     * @api {GET} /services/meta getMetaService
+     * @apiGroup Meta
+     */
+    @RequestMapping("/meta")
+    public List<ServiceDTO> getMetaService() {
+        List<InstanceInfo> instances = discoveryService.getMetaServiceInstances();
+        List<ServiceDTO> result = instances.stream().map(new Function<InstanceInfo, ServiceDTO>() {
 
-  @RequestMapping("/meta")
-  public List<ServiceDTO> getMetaService() {
-    List<InstanceInfo> instances = discoveryService.getMetaServiceInstances();
-    List<ServiceDTO> result = instances.stream().map(new Function<InstanceInfo, ServiceDTO>() {
+            @Override
+            public ServiceDTO apply(InstanceInfo instance) {
+                ServiceDTO service = new ServiceDTO();
+                service.setAppName(instance.getAppName());
+                service.setInstanceId(instance.getInstanceId());
+                service.setHomepageUrl(instance.getHomePageUrl());
+                return service;
+            }
 
-      @Override
-      public ServiceDTO apply(InstanceInfo instance) {
-        ServiceDTO service = new ServiceDTO();
-        service.setAppName(instance.getAppName());
-        service.setInstanceId(instance.getInstanceId());
-        service.setHomepageUrl(instance.getHomePageUrl());
-        return service;
-      }
+        }).collect(Collectors.toList());
+        return result;
+    }
 
-    }).collect(Collectors.toList());
-    return result;
-  }
+    /**
+     * @api {GET} /services/config getConfigService
+     * @apiGroup Meta
+     * @apiParam {String} appId
+     * @apiParam {String} clientIp
+     */
+    @RequestMapping("/config")
+    public List<ServiceDTO> getConfigService(
+            @RequestParam(value = "appId", defaultValue = "") String appId,
+            @RequestParam(value = "ip", required = false) String clientIp) {
+        List<InstanceInfo> instances = discoveryService.getConfigServiceInstances();
+        List<ServiceDTO> result = instances.stream().map(new Function<InstanceInfo, ServiceDTO>() {
 
-  @RequestMapping("/config")
-  public List<ServiceDTO> getConfigService(
-      @RequestParam(value = "appId", defaultValue = "") String appId,
-      @RequestParam(value = "ip", required = false) String clientIp) {
-    List<InstanceInfo> instances = discoveryService.getConfigServiceInstances();
-    List<ServiceDTO> result = instances.stream().map(new Function<InstanceInfo, ServiceDTO>() {
+            @Override
+            public ServiceDTO apply(InstanceInfo instance) {
+                ServiceDTO service = new ServiceDTO();
+                service.setAppName(instance.getAppName());
+                service.setInstanceId(instance.getInstanceId());
+                service.setHomepageUrl(instance.getHomePageUrl());
+                return service;
+            }
 
-      @Override
-      public ServiceDTO apply(InstanceInfo instance) {
-        ServiceDTO service = new ServiceDTO();
-        service.setAppName(instance.getAppName());
-        service.setInstanceId(instance.getInstanceId());
-        service.setHomepageUrl(instance.getHomePageUrl());
-        return service;
-      }
+        }).collect(Collectors.toList());
+        return result;
+    }
 
-    }).collect(Collectors.toList());
-    return result;
-  }
+    /**
+     * @api {GET} /services/admin getAdminService
+     * @apiGroup Meta
+     */
+    @RequestMapping("/admin")
+    public List<ServiceDTO> getAdminService() {
+        List<InstanceInfo> instances = discoveryService.getAdminServiceInstances();
+        List<ServiceDTO> result = instances.stream().map(new Function<InstanceInfo, ServiceDTO>() {
 
-  @RequestMapping("/admin")
-  public List<ServiceDTO> getAdminService() {
-    List<InstanceInfo> instances = discoveryService.getAdminServiceInstances();
-    List<ServiceDTO> result = instances.stream().map(new Function<InstanceInfo, ServiceDTO>() {
+            @Override
+            public ServiceDTO apply(InstanceInfo instance) {
+                ServiceDTO service = new ServiceDTO();
+                service.setAppName(instance.getAppName());
+                service.setInstanceId(instance.getInstanceId());
+                service.setHomepageUrl(instance.getHomePageUrl());
+                return service;
+            }
 
-      @Override
-      public ServiceDTO apply(InstanceInfo instance) {
-        ServiceDTO service = new ServiceDTO();
-        service.setAppName(instance.getAppName());
-        service.setInstanceId(instance.getInstanceId());
-        service.setHomepageUrl(instance.getHomePageUrl());
-        return service;
-      }
-
-    }).collect(Collectors.toList());
-    return result;
-  }
+        }).collect(Collectors.toList());
+        return result;
+    }
 }
