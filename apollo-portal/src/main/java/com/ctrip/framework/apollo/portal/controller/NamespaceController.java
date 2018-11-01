@@ -143,7 +143,7 @@ public class NamespaceController {
      * @api {POST} /apps/{appId}/namespaces createNamespace
      * @apiGroup Namespace
      * @apiParam {String} appId
-     * @apiParam {List<NamespaceCreationModel>} models
+     * @apiParam {List} models
      */
     @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appId)")
     @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
