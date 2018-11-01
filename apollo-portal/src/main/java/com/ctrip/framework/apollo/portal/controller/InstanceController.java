@@ -26,11 +26,19 @@ import java.util.stream.Collectors;
 public class InstanceController {
 
     private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings()
-        .trimResults();
+            .trimResults();
 
     @Autowired
     private InstanceService instanceService;
 
+    /**
+     * @api {get} /envs/{env}/instances/by-release getByRelease
+     * @apiGroup instance
+     * @apiParam {String} env
+     * @apiParam {long} releaseId
+     * @apiParam {int} page
+     * @apiParam {int} size
+     */
     @RequestMapping(value = "/envs/{env}/instances/by-release", method = RequestMethod.GET)
     public PageDTO<InstanceDTO> getByRelease(@PathVariable String env, @RequestParam long releaseId,
                                              @RequestParam(defaultValue = "0") int page,
@@ -39,6 +47,16 @@ public class InstanceController {
         return instanceService.getByRelease(Env.valueOf(env), releaseId, page, size);
     }
 
+    /**
+     * @api {get} /envs/{env}/instances/by-namespace getByNamespace
+     * @apiGroup instance
+     * @apiParam {String} appId
+     * @apiParam {String} namespaceName
+     * @apiParam {String} instanceAppId
+     * @apiParam {long} releaseId
+     * @apiParam {int} page
+     * @apiParam {int} size
+     */
     @RequestMapping(value = "/envs/{env}/instances/by-namespace", method = RequestMethod.GET)
     public PageDTO<InstanceDTO> getByNamespace(@PathVariable String env, @RequestParam String appId,
                                                @RequestParam String clusterName, @RequestParam String namespaceName,
@@ -49,6 +67,14 @@ public class InstanceController {
         return instanceService.getByNamespace(Env.valueOf(env), appId, clusterName, namespaceName, instanceAppId, page, size);
     }
 
+    /**
+     * @api {get} /envs/{env}/instances/by-namespace/count getInstanceCountByNamespace
+     * @apiGroup instance
+     * @apiParam {String} env
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     */
     @RequestMapping(value = "/envs/{env}/instances/by-namespace/count", method = RequestMethod.GET)
     public ResponseEntity<Number> getInstanceCountByNamespace(@PathVariable String env, @RequestParam String appId,
                                                               @RequestParam String clusterName,
@@ -57,14 +83,22 @@ public class InstanceController {
         int count = instanceService.getInstanceCountByNamepsace(appId, Env.valueOf(env), clusterName, namespaceName);
         return ResponseEntity.ok(new Number(count));
     }
-
+    /**
+     * @api {get} /envs/{env}/instances/by-namespace-and-releases-not-in getByReleasesNotIn
+     * @apiGroup instance
+     * @apiParam {String} env
+     * @apiParam {String} appId
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     * @apiParam {String} releaseIds
+     */
     @RequestMapping(value = "/envs/{env}/instances/by-namespace-and-releases-not-in", method = RequestMethod.GET)
     public List<InstanceDTO> getByReleasesNotIn(@PathVariable String env, @RequestParam String appId,
                                                 @RequestParam String clusterName, @RequestParam String namespaceName,
                                                 @RequestParam String releaseIds) {
 
         Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong)
-            .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
 
         if (CollectionUtils.isEmpty(releaseIdSet)) {
             throw new BadRequestException("release ids can not be empty");
