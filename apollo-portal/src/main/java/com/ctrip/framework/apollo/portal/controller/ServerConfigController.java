@@ -25,38 +25,48 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class ServerConfigController {
 
-  @Autowired
-  private ServerConfigRepository serverConfigRepository;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
+    @Autowired
+    private ServerConfigRepository serverConfigRepository;
+    @Autowired
+    private UserInfoHolder userInfoHolder;
 
-  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/server/config", method = RequestMethod.POST)
-  public ServerConfig createOrUpdate(@RequestBody ServerConfig serverConfig) {
+    /**
+     * @api {POST} /server/config createOrUpdate
+     * @apiGroup ServerConf
+     * @apiParam {ServerConfig} serverConfig
+     */
+    @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+    @RequestMapping(value = "/server/config", method = RequestMethod.POST)
+    public ServerConfig createOrUpdate(@RequestBody ServerConfig serverConfig) {
 
-    checkModel(Objects.nonNull(serverConfig));
-    RequestPrecondition.checkArgumentsNotEmpty(serverConfig.getKey(), serverConfig.getValue());
+        checkModel(Objects.nonNull(serverConfig));
+        RequestPrecondition.checkArgumentsNotEmpty(serverConfig.getKey(), serverConfig.getValue());
 
-    String modifiedBy = userInfoHolder.getUser().getUserId();
+        String modifiedBy = userInfoHolder.getUser().getUserId();
 
-    ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());
+        ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());
 
-    if (Objects.isNull(storedConfig)) {//create
-      serverConfig.setDataChangeCreatedBy(modifiedBy);
-      serverConfig.setDataChangeLastModifiedBy(modifiedBy);
-      serverConfig.setId(0L);//为空，设置ID 为0，jpa执行新增操作
-      return serverConfigRepository.save(serverConfig);
-    } else {//update
-      BeanUtils.copyEntityProperties(serverConfig, storedConfig);
-      storedConfig.setDataChangeLastModifiedBy(modifiedBy);
-      return serverConfigRepository.save(storedConfig);
+        if (Objects.isNull(storedConfig)) {//create
+            serverConfig.setDataChangeCreatedBy(modifiedBy);
+            serverConfig.setDataChangeLastModifiedBy(modifiedBy);
+            serverConfig.setId(0L);//为空，设置ID 为0，jpa执行新增操作
+            return serverConfigRepository.save(serverConfig);
+        } else {//update
+            BeanUtils.copyEntityProperties(serverConfig, storedConfig);
+            storedConfig.setDataChangeLastModifiedBy(modifiedBy);
+            return serverConfigRepository.save(storedConfig);
+        }
     }
-  }
 
-  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/server/config/{key:.+}", method = RequestMethod.GET)
-  public ServerConfig loadServerConfig(@PathVariable String key) {
-    return serverConfigRepository.findByKey(key);
-  }
+    /**
+     * @api {GET} /server/config/{key:.+} loadServerConfig
+     * @apiGroup ServerConf
+     * @apiParam {String} key
+     */
+    @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+    @RequestMapping(value = "/server/config/{key:.+}", method = RequestMethod.GET)
+    public ServerConfig loadServerConfig(@PathVariable String key) {
+        return serverConfigRepository.findByKey(key);
+    }
 
 }

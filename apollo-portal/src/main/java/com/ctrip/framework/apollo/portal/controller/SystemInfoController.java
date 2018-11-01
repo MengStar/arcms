@@ -42,6 +42,10 @@ public class SystemInfoController {
     restTemplate = restTemplateFactory.getObject();
   }
 
+  /**
+   * @api {GET} /system-info getSystemInfo
+   * @apiGroup SysInfo
+   */
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @RequestMapping(method = RequestMethod.GET)
   public SystemInfo getSystemInfo() {
@@ -79,6 +83,11 @@ public class SystemInfoController {
     return systemInfo;
   }
 
+  /**
+   * @api {GET} /system-info/health checkHealth
+   * @apiGroup SysInfo
+   * @apiParam {String} host
+   */
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @RequestMapping(value = "/health", method = RequestMethod.GET)
   public Health checkHealth(@RequestParam String host) {

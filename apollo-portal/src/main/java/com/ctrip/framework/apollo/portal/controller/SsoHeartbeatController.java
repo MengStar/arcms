@@ -16,6 +16,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
+/**
+ * @api {GET} /sso_heartbeat heartbeat
+ * @apiGroup Heart
+ */
 @Controller
 @RequestMapping("/sso_heartbeat")
 public class SsoHeartbeatController {

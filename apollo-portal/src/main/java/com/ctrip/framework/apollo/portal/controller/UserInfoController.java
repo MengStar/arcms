@@ -27,51 +27,76 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class UserInfoController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private LogoutHandler logoutHandler;
+    @Autowired
+    private UserInfoHolder userInfoHolder;
+    @Autowired
+    private LogoutHandler logoutHandler;
 
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
 
-  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/users", method = RequestMethod.POST)
-  public void createOrUpdateUser(@RequestBody UserPO user) {
-    if (StringUtils.isContainEmpty(user.getUsername(), user.getPassword())) {
-      throw new BadRequestException("Username and password can not be empty.");
+    /**
+     * @api {POST} /users createOrUpdateUser
+     * @apiGroup User
+     * @apiParam {UserPO} user
+     */
+    @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public void createOrUpdateUser(@RequestBody UserPO user) {
+        if (StringUtils.isContainEmpty(user.getUsername(), user.getPassword())) {
+            throw new BadRequestException("Username and password can not be empty.");
+        }
+
+        if (userService instanceof SpringSecurityUserService) {
+            ((SpringSecurityUserService) userService).createOrUpdate(user);
+        } else {
+            throw new UnsupportedOperationException("Create or update user operation is unsupported");
+        }
+
     }
 
-    if (userService instanceof SpringSecurityUserService) {
-      ((SpringSecurityUserService) userService).createOrUpdate(user);
-    } else {
-      throw new UnsupportedOperationException("Create or update user operation is unsupported");
+    /**
+     * @api {GET} /users getCurrentUserName
+     * @apiGroup User
+     */
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public UserInfo getCurrentUserName() {
+        return userInfoHolder.getUser();
     }
 
-  }
+    /**
+     * @api {GET} /user/logout logout
+     * @apiGroup User
+     */
+    @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logoutHandler.logout(request, response);
+    }
 
-  @RequestMapping(value = "/user", method = RequestMethod.GET)
-  public UserInfo getCurrentUserName() {
-    return userInfoHolder.getUser();
-  }
+    /**
+     * @api {GET} /users searchUsersByKeyword
+     * @apiGroup User
+     * @apiParam {String} keyword
+     * @apiParam {int} page
+     * @apiParam {int} size
+     */
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<UserInfo> searchUsersByKeyword(@RequestParam(value = "keyword") String keyword,
+                                               @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                               @RequestParam(value = "limit", defaultValue = "10") int limit) {
+        return userService.searchUsers(keyword, offset, limit);
+    }
 
-  @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
-  public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    logoutHandler.logout(request, response);
-  }
-
-  @RequestMapping(value = "/users", method = RequestMethod.GET)
-  public List<UserInfo> searchUsersByKeyword(@RequestParam(value = "keyword") String keyword,
-                                             @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                             @RequestParam(value = "limit", defaultValue = "10") int limit) {
-    return userService.searchUsers(keyword, offset, limit);
-  }
-
-  @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-  public UserInfo getUserByUserId(@PathVariable String userId) {
-    return userService.findByUserId(userId);
-  }
+    /**
+     * @api {GET} /users/{userId} getUserByUserId
+     * @apiGroup User
+     * @apiParam {String} userId
+     */
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
+    public UserInfo getUserByUserId(@PathVariable String userId) {
+        return userService.findByUserId(userId);
+    }
 
 
 }
