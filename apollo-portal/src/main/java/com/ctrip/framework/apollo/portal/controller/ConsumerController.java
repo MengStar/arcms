@@ -36,7 +36,12 @@ public class ConsumerController {
   @Autowired
   private ConsumerService consumerService;
 
-
+  /**
+   * @api {post} /consumers createConsumer
+   * @apiGroup consumer
+   * @apiParam {Consumer} consumer
+   * @apiParam {Date} expires
+   */
   @Transactional
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @RequestMapping(value = "/consumers", method = RequestMethod.POST)
@@ -58,7 +63,11 @@ public class ConsumerController {
 
     return consumerService.generateAndSaveConsumerToken(createdConsumer, expires);
   }
-
+  /**
+   * @api {post} /consumers/by-appId getConsumerTokenByAppId
+   * @apiGroup consumer
+   * @apiParam {String} appId
+   */
   @RequestMapping(value = "/consumers/by-appId", method = RequestMethod.GET)
   public ConsumerToken getConsumerTokenByAppId(@RequestParam String appId) {
     return consumerService.getConsumerTokenByAppId(appId);

@@ -210,7 +210,7 @@ public class AppController {
         publisher.publishEvent(new AppDeletionEvent(app));
     }
     /**
-     * @api {get} /apps/{appId}/miss_envs
+     * @api {get} /apps/{appId}/miss_envs findMissEnvs
      * @apiGroup App
      * @apiParam {String} appId
      */

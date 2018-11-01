@@ -16,7 +16,10 @@ public class EnvController {
 
   @Autowired
   private PortalSettings portalSettings;
-
+  /**
+   * @api {get} /envs envs
+   * @apiGroup env
+   */
   @RequestMapping(value = "", method = RequestMethod.GET)
   public List<Env> envs() {
     return portalSettings.getActiveEnvs();

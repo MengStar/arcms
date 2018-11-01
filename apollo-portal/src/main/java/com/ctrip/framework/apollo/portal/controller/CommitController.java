@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.service.CommitService;
 
 import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,25 +21,35 @@ import java.util.List;
 @RestController
 public class CommitController {
 
-  @Autowired
-  private CommitService commitService;
+    @Autowired
+    private CommitService commitService;
 
-  @Autowired
-  private PermissionValidator permissionValidator;
+    @Autowired
+    private PermissionValidator permissionValidator;
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/commits", method = RequestMethod.GET)
-  public List<CommitDTO> find(@PathVariable String appId, @PathVariable String env,
-                              @PathVariable String clusterName, @PathVariable String namespaceName,
-                              @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-    if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
-      return Collections.emptyList();
+    /**
+     * @api {get} /apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/commit find
+     * @apiGroup commit
+     * @apiParam {String} sppId
+     * @apiParam {String} env
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     * @apiParam {int} page
+     * @apiParam {int} size
+     */
+    @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/commits", method = RequestMethod.GET)
+    public List<CommitDTO> find(@PathVariable String appId, @PathVariable String env,
+                                @PathVariable String clusterName, @PathVariable String namespaceName,
+                                @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
+            return Collections.emptyList();
+        }
+
+        RequestPrecondition.checkNumberPositive(size);
+        RequestPrecondition.checkNumberNotNegative(page);
+
+        return commitService.find(appId, Env.valueOf(env), clusterName, namespaceName, page, size);
+
     }
-
-    RequestPrecondition.checkNumberPositive(size);
-    RequestPrecondition.checkNumberNotNegative(page);
-
-    return commitService.find(appId, Env.valueOf(env), clusterName, namespaceName, page, size);
-
-  }
 
 }
