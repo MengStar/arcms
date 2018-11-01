@@ -14,24 +14,39 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NamespaceLockController {
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
+    @Autowired
+    private NamespaceLockService namespaceLockService;
 
-  @Deprecated
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
-  public NamespaceLockDTO getNamespaceLock(@PathVariable String appId, @PathVariable String env,
-                                           @PathVariable String clusterName, @PathVariable String namespaceName) {
+    /**
+     * @api {GET} /apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock
+     * @apiGroup NamespaceLock
+     * @apiParam {String} appId
+     * @apiParam {String} env
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     */
+    @Deprecated
+    @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
+    public NamespaceLockDTO getNamespaceLock(@PathVariable String appId, @PathVariable String env,
+                                             @PathVariable String clusterName, @PathVariable String namespaceName) {
 
-    return namespaceLockService.getNamespaceLock(appId, Env.valueOf(env), clusterName, namespaceName);
-  }
+        return namespaceLockService.getNamespaceLock(appId, Env.valueOf(env), clusterName, namespaceName);
+    }
+    /**
+     * @api {GET} /apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock-info getNamespaceLockInfo
+     * @apiGroup NamespaceLock
+     * @apiParam {String} appId
+     * @apiParam {String} env
+     * @apiParam {String} clusterName
+     * @apiParam {String} namespaceName
+     */
+    @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock-info", method = RequestMethod.GET)
+    public LockInfo getNamespaceLockInfo(@PathVariable String appId, @PathVariable String env,
+                                         @PathVariable String clusterName, @PathVariable String namespaceName) {
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock-info", method = RequestMethod.GET)
-  public LockInfo getNamespaceLockInfo(@PathVariable String appId, @PathVariable String env,
-                                       @PathVariable String clusterName, @PathVariable String namespaceName) {
+        return namespaceLockService.getNamespaceLockInfo(appId, Env.fromString(env), clusterName, namespaceName);
 
-    return namespaceLockService.getNamespaceLockInfo(appId, Env.fromString(env), clusterName, namespaceName);
-
-  }
+    }
 
 
 }
