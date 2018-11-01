@@ -13,7 +13,10 @@ public class PageSettingController {
 
   @Autowired
   private PortalConfig portalConfig;
-
+  /**
+   * @api {GET} /page-settings getPageSetting
+   * @apiGroup Page
+   */
   @RequestMapping(value = "/page-settings", method = RequestMethod.GET)
   public PageSetting getPageSetting() {
     PageSetting setting = new PageSetting();
