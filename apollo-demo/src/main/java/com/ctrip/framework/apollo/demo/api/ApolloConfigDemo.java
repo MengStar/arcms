@@ -46,7 +46,7 @@ public class ApolloConfigDemo {
     };
     config = ConfigService.getAppConfig();
     config.addChangeListener(changeListener);
-    publicConfig = ConfigService.getConfig("TEST1.apollo");
+    publicConfig = ConfigService.getConfig("base_info");
     publicConfig.addChangeListener(changeListener);
     applicationConfigFile = ConfigService.getConfigFile("application", ConfigFileFormat.Properties);
     xmlConfigFile = ConfigService.getConfigFile("datasources", ConfigFileFormat.XML);
@@ -98,7 +98,7 @@ public class ApolloConfigDemo {
     ApolloConfigDemo apolloConfigDemo = new ApolloConfigDemo();
     apolloConfigDemo.printEnvInfo();
     System.out.println(
-        "Apollo Config Demo. Please input key to get the value.");
+        "ARCMS Config Demo. Please input key to get the value.");
     while (true) {
       System.out.print("> ");
       String input = new BufferedReader(new InputStreamReader(System.in, Charsets.UTF_8)).readLine();
