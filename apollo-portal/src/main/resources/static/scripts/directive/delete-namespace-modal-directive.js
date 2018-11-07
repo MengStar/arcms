@@ -67,8 +67,8 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
                             scope.isAppMasterUser = isAppMasterUser;
 
                             if (!isAppMasterUser) {
-                                toastr.error("您没有项目管理员权限，只有管理员才能删除Namespace，请找项目管理员 [" + scope.masterUsers.join("，")
-                                             + "] 删除Namespace", "删除失败");
+                                toastr.error("您没有项目管理员权限，只有管理员才能删除配置分组，请找项目管理员 [" + scope.masterUsers.join("，")
+                                             + "] 删除配置分组", "删除失败");
                                 d.reject();
                             } else {
                                 d.resolve();

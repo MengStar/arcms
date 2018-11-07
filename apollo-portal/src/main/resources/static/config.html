@@ -134,7 +134,7 @@
                     <div class="list-group-item cursor-pointer hover" ng-click="showMasterPermissionTips()"
                          ng-show="!hasCreateNamespacePermission">
                         <div class="row icon-text icon-plus-orange">
-                            <p class="btn-title">添加Namespace</p>
+                            <p class="btn-title">添加配置分组</p>
                         </div>
                     </div>
 
@@ -176,7 +176,7 @@
                 <span ng-bind="pageContext.clusterName"></span>
                 集群的实例只会使用
                 <span ng-bind="pageContext.clusterName"></span>
-                集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置。
+                集群（当前页面）的配置，只有当对应配置分组在当前集群没有发布过配置时，才会使用default集群的配置。
             </div>
 
         </div>
@@ -253,12 +253,12 @@
                              apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'masterNoPermissionDialog'" apollo-title="'申请配置权限'"
-                             apollo-detail="'您不是项目管理员， 只有项目管理员才有添加集群、namespace的权限。
+                             apollo-detail="'您不是项目管理员， 只有项目管理员才有添加集群、配置分组的权限。
                                  如需管理员权限，请找项目管理员 ' + masterUsers + ' 分配管理员权限'"
                              apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'namespaceLockedDialog'" apollo-title="'编辑受限'"
-                             apollo-detail="'当前namespace正在被 ' + lockOwner + ' 编辑，一次发布只能被一个人修改.'"
+                             apollo-detail="'当前配置分组正在被 ' + lockOwner + ' 编辑，一次发布只能被一个人修改.'"
                              apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'rollbackAlertDialog'" apollo-title="'回滚'"
@@ -277,7 +277,7 @@
                              apollo-detail="'灰度规则已生效，但发现灰度版本有未发布的配置，这些配置需要手动灰度发布才会生效'"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'mergeAndReleaseDenyDialog'" apollo-title="'全量发布'"
-                             apollo-detail="'namespace主版本有未发布的配置，请先发布主版本配置'"></apolloconfirmdialog>
+                             apollo-detail="'配置分组主版本有未发布的配置，请先发布主版本配置'"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'grayReleaseWithoutRulesTips'" apollo-title="'缺失灰度规则提示'"
                              apollo-detail="'灰度版本还没有配置任何灰度规则，请配置灰度规则'">
@@ -320,7 +320,7 @@
                         灰度流程为:<br>
                         &nbsp;&nbsp;1.创建灰度版本 <br>
                         &nbsp;&nbsp;2.配置灰度配置项<br>
-                        &nbsp;&nbsp;3.配置灰度规则.如果是私有的namespace可以按照客户端的IP进行灰度，如果是公共的namespace则可以同时按AppId和客户端的IP进行灰度<br>
+                        &nbsp;&nbsp;3.配置灰度规则.如果是私有的配置分组可以按照客户端的IP进行灰度，如果是公共的配置分组则可以同时按AppId和客户端的IP进行灰度<br>
                         &nbsp;&nbsp;4.灰度发布<br>
                         灰度版本最终有两种结果:<b>全量发布和放弃灰度</b><br>
                         <b>全量发布</b>:灰度的配置合到主版本并发布，所有的客户端都会使用合并后的配置<br>

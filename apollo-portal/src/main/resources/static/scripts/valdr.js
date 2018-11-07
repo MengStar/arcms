@@ -48,10 +48,10 @@ namespace_module.config(function (valdrProvider) {
                                          'namespaceName': {
                                              'size': {
                                                  'max': 32,
-                                                 'message': 'Namespace名称长度不能多于32个字符'
+                                                 'message': '集群分组名称长度不能多于32个字符'
                                              },
                                              'required': {
-                                                 'message': 'Namespace名称不能为空'
+                                                 'message': '集群分组名称不能为空'
                                              }
                                          },
                                          'comment': {

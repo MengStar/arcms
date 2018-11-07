@@ -1,15 +1,15 @@
 <header class="row namespace-attribute-panel">
     <div class="text-center namespace-attribute-public">
             <span data-tooltip="tooltip" data-placement="bottom"
-                  title="私有namespace({{namespace.baseInfo.namespaceName}})的配置只能被AppId为{{appId}}的客户端读取到"
+                  title="私有配置分组({{namespace.baseInfo.namespaceName}})的配置只能被AppId为{{appId}}的客户端读取到"
                   ng-show="!namespace.isPublic">私有</span>
 
             <span data-tooltip="tooltip" data-placement="top"
-                  title="namespace({{namespace.baseInfo.namespaceName}})的配置能被任何客户端读取到"
+                  title="配置分组({{namespace.baseInfo.namespaceName}})的配置能被任何客户端读取到"
                   ng-show="namespace.isPublic && namespace.parentAppId == namespace.baseInfo.appId">公共</span>
 
             <span data-tooltip="tooltip" data-placement="top"
-                  title="namespace({{namespace.baseInfo.namespaceName}})的配置将会覆盖公共namespace的配置, 且合并之后的配置只能被AppId为{{appId}}的客户端读取到"
+                  title="配置分组({{namespace.baseInfo.namespaceName}})的配置将会覆盖公共配置分组的配置, 且合并之后的配置只能被AppId为{{appId}}的客户端读取到"
                   ng-show="namespace.isPublic && namespace.isLinkedNamespace"
                   ng-click="goToParentAppConfigPage(namespace)">关联</span>
     </div>
