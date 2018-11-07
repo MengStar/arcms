@@ -31,24 +31,11 @@
             <div class="J_appFound hidden"
                  ng-show="!notFoundApp && (viewMode == 1 || (viewMode == 2 && showSideBar))">
 
-                <!--env list-->
-                <section class="panel">
-                    <header class="panel-heading">
-                        环境列表
-                        <span class="pull-right"
-                              data-tooltip="tooltip" data-placement="bottom" title="通过切换环境、集群来管理不同环境、集群的配置">
-                                    <img src="img/question.png" class="i-20"/>
-                            </span>
-                    </header>
-                    <div id="treeview" class="no-radius"></div>
-                </section>
-
-
                 <!--app info-->
                 <section class="panel">
                     <header class="panel-heading">
                         项目信息
-                            <span class="pull-right">
+                        <span class="pull-right">
 
                                 <a href="/app/setting.html?#/appid={{pageContext.appId}}"
                                    style="margin-right: 5px;text-decoration:none;">
@@ -103,6 +90,18 @@
                         </table>
 
                     </div>
+                </section>
+
+                <!--env list-->
+                <section class="panel">
+                    <header class="panel-heading">
+                        环境列表
+                        <span class="pull-right"
+                              data-tooltip="tooltip" data-placement="bottom" title="通过切换环境、集群来管理不同环境、集群的配置">
+                                    <img src="img/question.png" class="i-20"/>
+                            </span>
+                    </header>
+                    <div id="treeview" class="no-radius"></div>
                 </section>
 
                 <!--operation entrance-->
@@ -378,7 +377,6 @@
 <script src="vendor/ui-ace/mode-json.js" type="text/javascript"></script>
 <script src="vendor/ui-ace/worker-json.js" type="text/javascript"></script>
 <script src="vendor/ui-ace/worker-xml.js" type="text/javascript"></script>
-
 
 
 <!--valdr-->
