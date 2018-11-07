@@ -42,8 +42,8 @@
                             <li>通过添加集群，可以使同一份程序在不同的集群（如不同的数据中心）使用不同的配置</li>
                             <li>如果不同集群使用一样的配置，则没有必要创建集群</li>
                             <li>
-                                Apollo默认会读取机器上/opt/settings/server.properties(linux)或C:\opt\settings\server.properties(windows)文件中的idc属性作为集群名字，
-                                如SHAJQ（金桥数据中心）、SHAOY（欧阳数据中心)
+                                Arcms 默认会读取机器上/opt/settings/server.properties(linux)或C:\opt\settings\server.properties(windows)文件中的idc属性作为集群名字，
+                                如NORTH（北方数据中心）、ALIYUN（阿里云)
                             </li>
                             <li>在这里创建的集群名字需要和机器上server.properties中的idc属性一致</li>
                         </ul>
@@ -64,7 +64,7 @@
                                 集群名称</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="clusterName" ng-model="clusterName">
-                                <small>(部署集群如:SHAJQ,SHAOY 或自定义集群如:SHAJQ-xx,SHAJQ-yy)</small>
+                                <small>(部署集群如:NORTH,ALIYUN 或自定义集群如:NORTH-xx,ALIYUN-yy)</small>
                             </div>
                         </div>
                         <div class="form-group">

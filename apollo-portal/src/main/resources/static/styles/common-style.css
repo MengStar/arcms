@@ -225,7 +225,9 @@ table th {
     background: #f1f2f7;
     z-index: 2;
 }
-
+.side-bar .panel{
+    margin-bottom: 0;
+}
 .position-absolute {
     position: absolute;
 }
