@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" media='all' href="../vendor/angular/loading-bar.min.css">
     <link rel="stylesheet" type="text/css" href="../styles/common-style.css">
     <link rel="stylesheet" type="text/css" href="../vendor/select2/select2.min.css">
-    <title>删除应用、集群、AppNamespace</title>
+    <title>删除应用、集群、配置分组</title>
 </head>
 
 <body>
@@ -121,11 +121,11 @@
 
             <!-- delete app namespace -->
             <section class="row">
-                <h5>删除AppNamespace
-                    <small>（注意，所有环境的Namespace和AppNamespace都会被删除！如果只是要删除某个环境的Namespace，让用户到项目页面中自行删除！）</small>
+                <h5>删除配置分组
+                    <small>（注意，所有环境的配置分组和项目配置分组都会被删除！如果只是要删除某个环境的配置分组，让用户到项目页面中自行删除！）</small>
                 </h5>
                 <small>
-                    目前用户可以自行删除关联的Namespace和私有的Namespace，不过无法删除AppNamespace元信息，因为删除AppNamespace影响面较大，所以现在暂时只允许系统管理员删除，对于公共Namespace需要确保没有应用关联了该AppNamespace。
+                    目前用户可以自行删除关联的配置分组和私有的配置分组，不过无法删除项目配置分组元信息，因为删除项目配置分组影响面较大，所以现在暂时只允许系统管理员删除，对于公共配置分组需要确保没有应用关联了该项目配置分组。
                 </small>
                 <hr>
                 <form class="form-horizontal">
@@ -140,10 +140,10 @@
                     <div class="form-group" valdr-form-group>
                         <label class="col-sm-2 control-label">
                             <apollorequiredfield></apollorequiredfield>
-                            AppNamespace名称</label>
+                            项目配置分组名称</label>
                         <div class="col-sm-5">
                             <input type="text" class="form-control" ng-model="appNamespace.name">
-                            <small>(非properties类型的namespace请加上类型后缀，例如apollo.xml)</small>
+                            <small>(非properties类型的配置分组请加上类型后缀，例如apollo.xml)</small>
                         </div>
                         <div class="col-sm-1">
                             <button class="btn btn-info" ng-click="getAppNamespaceInfo()">查询</button>
@@ -151,7 +151,7 @@
                     </div>
                     <div class="form-group" viv clform-group>
                         <label class="col-sm-2 control-label">
-                            AppNamespace信息</label>
+                            项目配置分组信息</label>
                         <div class="col-sm-5">
                             <h5 ng-show="appNamespace.info" ng-bind="appNamespace.info"></h5>
                         </div>
@@ -162,7 +162,7 @@
                             <button type="submit" class="btn btn-primary"
                                     ng-disabled="deleteAppNamespaceBtnDisabled"
                                     ng-click="deleteAppNamespace()">
-                                删除AppNamespace
+                                删除项目配置分组
                             </button>
                         </div>
                     </div>
