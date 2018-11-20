@@ -30,7 +30,7 @@ namespace_module.controller("LinkNamespaceController",
                                          publicNamespaces.push(namespace);
                                      });
                                      $('#namespaces').select2({
-                                                                  placeholder: '请选择Namespace',
+                                                                  placeholder: '请选择配置分组',
                                                                   width: '100%',
                                                                   data: publicNamespaces
                                                               });
@@ -80,7 +80,7 @@ namespace_module.controller("LinkNamespaceController",
                                          if ($scope.namespaceType == 1) {
                                              var selectedNamespaceName = $('#namespaces').select2('data')[0].id;
                                              if (!selectedNamespaceName) {
-                                                 toastr.warning("请选择Namespace");
+                                                 toastr.warning("请选择配置分组");
                                                  return;
                                              }
 
