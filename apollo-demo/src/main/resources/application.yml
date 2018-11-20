@@ -2,4 +2,4 @@ apollo:
   bootstrap:
     enabled: true
     # will inject 'application' and 'datasources.xml' namespaces in bootstrap phase
-#    namespaces: application,datasources
+    namespaces: application,datasources.xml,R&D.redis
