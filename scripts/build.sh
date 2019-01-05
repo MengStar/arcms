@@ -1,14 +1,14 @@
 #!/bin/sh
 
 # apollo config db info
-apollo_config_db_url=jdbc:mysql://localhost:3306/ApolloConfigDB?characterEncoding=utf8
+apollo_config_db_url=jdbc:mysql://cdb-d0417fxm.cd.tencentcdb.com:10041/ApolloConfigDB?characterEncoding=utf8
 apollo_config_db_username=root
-apollo_config_db_password=password
+apollo_config_db_password=sw2011prj
 
 # apollo portal db info
-apollo_portal_db_url=jdbc:mysql://localhost:3306/ApolloPortalDB?characterEncoding=utf8
+apollo_portal_db_url=jdbc:mysql://cdb-d0417fxm.cd.tencentcdb.com:10041/ApolloConfigDB?characterEncoding=utf8
 apollo_portal_db_username=root
-apollo_portal_db_password=password
+apollo_portal_db_password=sw2011prj
 
 # meta server url, different environments should have different meta server addresses
 dev_meta=http://localhost:8080
