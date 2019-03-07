@@ -43,7 +43,6 @@ public class ServiceController {
             ServiceDTO service = new ServiceDTO();
             service.setAppName(instance.getAppName());
             service.setInstanceId(instance.getInstanceId());
-          //service.setHomepageUrl(instance.getHomePageUrl());
             service.setHomepageUrl("http://127.0.0.1:8080");
             return service;
         }).collect(Collectors.toList());
@@ -57,7 +56,6 @@ public class ServiceController {
             service.setAppName(instance.getAppName());
             service.setInstanceId(instance.getInstanceId());
             service.setHomepageUrl(instance.getHomePageUrl());
-            //service.setHomepageUrl("http://127.0.0.1:8080");
             return service;
         }).collect(Collectors.toList());
         return result;
