@@ -1,0 +1,48 @@
+version: '3.2'
+services:
+  sync:
+    image: sync:latest
+    deploy:
+      replicas: 1
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.serviceDomain=api.cnblogs.com
+        - com.df.port=80
+    networks:
+      - arcms
+    ports:
+      - 8080:8080
+  admin:
+    image: admin:latest
+    deploy:
+      replicas: 2
+      update_config:
+        delay: 5s
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.serviceDomain=api.cnblogs.com
+        - com.df.port=80
+    networks:
+      - arcms
+    ports:
+      - 8090:8090
+  portal:
+    image: portal:latest
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 5s
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.serviceDomain=api.cnblogs.com
+        - com.df.port=80
+    networks:
+      - arcms
+    ports:
+      - 8070:8070
+networks:
+  arcms:
+    driver: overlay

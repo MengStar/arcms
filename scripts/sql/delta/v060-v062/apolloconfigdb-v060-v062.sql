@@ -2,5 +2,5 @@
 
 Use ApolloConfigDB;
 
-ALTER TABLE `App` DROP INDEX `NAME`;
+ALTER TABLE Subject DROP INDEX `NAME`;
 CREATE INDEX `IX_NAME` ON App (`Name`(191));

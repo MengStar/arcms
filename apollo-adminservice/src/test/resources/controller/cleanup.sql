@@ -1,8 +1,8 @@
 DELETE FROM Item;
-DELETE FROM Namespace;
-DELETE FROM AppNamespace;
+DELETE FROM Party;
+DELETE FROM SubjectParty;
 DELETE FROM Cluster;
-DELETE FROM App;
-DELETE FROM NamespaceLock;
+DELETE FROM Subject;
+DELETE FROM PartyLock;
 DELETE FROM ServerConfig;
 

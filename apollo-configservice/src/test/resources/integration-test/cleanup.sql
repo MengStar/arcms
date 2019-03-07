@@ -1,9 +1,9 @@
-DELETE FROM Release;
-DELETE FROM Namespace;
-DELETE FROM AppNamespace;
+DELETE FROM Publish;
+DELETE FROM Party;
+DELETE FROM SubjectParty;
 DELETE FROM Cluster;
-DELETE FROM App;
-DELETE FROM ReleaseMessage;
-DELETE FROM GrayReleaseRule;
+DELETE FROM Subject;
+DELETE FROM PublishMessage;
+DELETE FROM GrayRule;
 
 

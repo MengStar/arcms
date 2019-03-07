@@ -1,4 +1,4 @@
-INSERT INTO `appnamespace` (`Id`, `Name`, `AppId`, `Format`, `IsPublic`, `Comment`, `IsDeleted`, `DataChange_CreatedBy`, `DataChange_CreatedTime`, `DataChange_LastModifiedBy`, `DataChange_LastTime`)
+INSERT INTO SubjectParty (`Id`, `Name`, `AppId`, `Format`, `IsPublic`, `Comment`, `IsDeleted`, `DataChange_CreatedBy`, `DataChange_CreatedTime`, `DataChange_LastModifiedBy`, `DataChange_LastTime`)
 VALUES
 	(139, 'FX.old.xml', '100003173', 'properties', 1, '', 0, 'zhanglea', '2016-07-11 10:00:58', 'zhanglea', '2016-07-11 10:00:58'),
 	(140, 'SCC.song0711-03', 'song0711-01', 'properties', 1, '', 0, 'song_s', '2016-07-11 10:04:09', 'song_s', '2016-07-11 10:04:09'),
@@ -8,6 +8,6 @@ VALUES
 	(144, 'datasourcexml', '100003173', 'xml', 1, '', 0, 'apollo', '2016-07-11 12:08:29', 'apollo', '2016-07-11 12:08:29'),
 	(145, 'datasource.xml', '100003173', 'xml', 0, '', 0, 'apollo', '2016-07-11 12:09:30', 'apollo', '2016-07-11 12:09:30');
 
-INSERT INTO `app` (`AppId`, `Name`, `OrgId`, `OrgName`, `OwnerName`, `OwnerEmail`, `IsDeleted`, `DataChange_CreatedBy`, `DataChange_LastModifiedBy`)
+INSERT INTO Subject (`AppId`, `Name`, `OrgId`, `OrgName`, `OwnerName`, `OwnerEmail`, `IsDeleted`, `DataChange_CreatedBy`, `DataChange_LastModifiedBy`)
 VALUES
 	('1000', 'apollo-portal', 'FX', '框架', 'song_s', 'song_s@ctrip.com', 0, 'song_s', 'song_s');

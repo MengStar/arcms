@@ -83,7 +83,7 @@ spec:
                 path: application-github.properties
       
       containers:
-        - image: apollo-config-server:v1.0.0
+        - image: sync-server:v1.0.0
           securityContext:
             privileged: true
           imagePullPolicy: IfNotPresent
