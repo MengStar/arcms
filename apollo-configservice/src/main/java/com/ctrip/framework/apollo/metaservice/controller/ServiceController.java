@@ -39,7 +39,16 @@ public class ServiceController {
             @RequestParam(value = "appId", defaultValue = "") String appId,
             @RequestParam(value = "ip", required = false) String clientIp) {
         List<InstanceInfo> instances = discoveryService.getConfigServiceInstances();
-        return getServiceDTOS(instances);
+        List<ServiceDTO> result = instances.stream().map(instance -> {
+            ServiceDTO service = new ServiceDTO();
+            service.setAppName(instance.getAppName());
+            service.setInstanceId(instance.getInstanceId());
+          //service.setHomepageUrl(instance.getHomePageUrl());
+            service.setHomepageUrl("http://127.0.0.1:8080");
+            return service;
+        }).collect(Collectors.toList());
+        return result;
+        //   return getServiceDTOS(instances);
     }
 
     private List<ServiceDTO> getServiceDTOS(List<InstanceInfo> instances) {
@@ -47,8 +56,8 @@ public class ServiceController {
             ServiceDTO service = new ServiceDTO();
             service.setAppName(instance.getAppName());
             service.setInstanceId(instance.getInstanceId());
-           // service.setHomepageUrl(instance.getHomePageUrl());
-            service.setHomepageUrl("http://127.0.0.1:8080");
+            service.setHomepageUrl(instance.getHomePageUrl());
+            //service.setHomepageUrl("http://127.0.0.1:8080");
             return service;
         }).collect(Collectors.toList());
         return result;
