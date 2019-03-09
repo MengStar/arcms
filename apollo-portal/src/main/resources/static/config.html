@@ -56,7 +56,7 @@
                         <table class="project-info">
                             <tbody class="text-left">
                             <tr>
-                                <th>AppId:</th>
+                                <th>SubjectId:</th>
                                 <td ng-bind="appBaseInfo.appId"></td>
                             </tr>
                             <tr>
@@ -319,7 +319,7 @@
                         灰度流程为:<br>
                         &nbsp;&nbsp;1.创建灰度版本 <br>
                         &nbsp;&nbsp;2.配置灰度配置项<br>
-                        &nbsp;&nbsp;3.配置灰度规则.如果是私有的配置分组可以按照客户端的IP进行灰度，如果是公共的配置分组则可以同时按AppId和客户端的IP进行灰度<br>
+                        &nbsp;&nbsp;3.配置灰度规则.如果是私有的配置分组可以按照客户端的IP进行灰度，如果是公共的配置分组则可以同时按SubjectId和客户端的IP进行灰度<br>
                         &nbsp;&nbsp;4.灰度发布<br>
                         灰度版本最终有两种结果:<b>全量发布和放弃灰度</b><br>
                         <b>全量发布</b>:灰度的配置合到主版本并发布，所有的客户端都会使用合并后的配置<br>
