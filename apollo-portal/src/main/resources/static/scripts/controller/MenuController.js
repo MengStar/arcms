@@ -1,8 +1,7 @@
-index_module.controller('IndexController', ['$scope', '$window', 'toastr', 'AppUtil', 'AppService',
-                                            'UserService', 'FavoriteService',
-                                            IndexController]);
+menu_module.controller('MenuController', ['$scope', '$window', 'toastr', 'AppUtil', 'AppService',
+                                            'UserService', 'FavoriteService', MenuController]);
 
-function IndexController($scope, $window, toastr, AppUtil, AppService, UserService, FavoriteService) {
+function MenuController($scope, $window, toastr, AppUtil, AppService, UserService, FavoriteService) {
 
     $scope.userId = '';
 
