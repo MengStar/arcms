@@ -43,7 +43,7 @@ public class ServiceController {
             ServiceDTO service = new ServiceDTO();
             service.setAppName(instance.getAppName());
             service.setInstanceId(instance.getInstanceId());
-            service.setHomepageUrl("http://syncservice.com:8080");
+            service.setHomepageUrl("http://sync:8080");
             return service;
         }).collect(Collectors.toList());
         return result;
