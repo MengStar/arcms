@@ -1,7 +1,7 @@
-docker tag portal registry.cn-hangzhou.aliyuncs.com/mengstars/portal
-docker tag sync registry.cn-hangzhou.aliyuncs.com/mengstars/sync
-docker tag admin registry.cn-hangzhou.aliyuncs.com/mengstars/admin
-docker push registry.cn-hangzhou.aliyuncs.com/mengstars/portal
-docker push registry.cn-hangzhou.aliyuncs.com/mengstars/sync
-docker push registry.cn-hangzhou.aliyuncs.com/mengstars/admin
+docker tag portalv1 registry.cn-hangzhou.aliyuncs.com/mengstars/portalv1
+docker tag syncv1 registry.cn-hangzhou.aliyuncs.com/mengstars/syncv1
+docker tag adminv1 registry.cn-hangzhou.aliyuncs.com/mengstars/adminv1
+docker push registry.cn-hangzhou.aliyuncs.com/mengstars/portalv1
+docker push registry.cn-hangzhou.aliyuncs.com/mengstars/syncv1
+docker push registry.cn-hangzhou.aliyuncs.com/mengstars/adminv1
 
